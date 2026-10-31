@@ -1,14 +1,33 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(
+            name: 'ENVIRONNEMENT',
+            choices: ['dev', 'recette', 'production'],
+            description: 'Choisir l environnement'
+        )
+
+        booleanParam(
+            name: 'EXECUTER_TESTS',
+            defaultValue: true,
+            description: 'Executer les tests automatiques'
+        )
+    }
+
     stages {
-        stage('Verification Python') {
+        stage('Preparation') {
             steps {
-                sh 'python3 --version'
+                echo "Environnement choisi : ${params.ENVIRONNEMENT}"
+                echo "Executer les tests : ${params.EXECUTER_TESTS}"
             }
         }
 
         stage('Installation des dependances') {
+            when {
+                expression { params.EXECUTER_TESTS }
+            }
+
             steps {
                 sh '''
                     python3 -m venv .venv
@@ -19,6 +38,10 @@ pipeline {
         }
 
         stage('Tests automatiques') {
+            when {
+                expression { params.EXECUTER_TESTS }
+            }
+
             steps {
                 sh '.venv/bin/python -m pytest -v'
             }
