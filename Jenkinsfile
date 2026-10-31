@@ -46,5 +46,33 @@ pipeline {
                 sh '.venv/bin/python -m pytest -v'
             }
         }
+
+        stage('Execution parallele') {
+            parallel {
+                stage('Tache A') {
+                    steps {
+                        echo 'Debut de la tache A'
+                        sh 'sleep 5'
+                        echo 'Fin de la tache A'
+                    }
+                }
+
+                stage('Tache B') {
+                    steps {
+                        echo 'Debut de la tache B'
+                        sh 'sleep 10'
+                        echo 'Fin de la tache B'
+                    }
+                }
+
+                stage('Tache C') {
+                    steps {
+                        echo 'Debut de la tache C'
+                        sh 'sleep 3'
+                        echo 'Fin de la tache C'
+                    }
+                }
+            }
+        }
     }
 }
